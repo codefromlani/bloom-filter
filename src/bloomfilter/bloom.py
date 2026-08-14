@@ -4,6 +4,12 @@ import hashlib
 
 class BloomFilter:
     def __init__(self, capacity: int, error_rate: float):
+        if capacity <= 0:
+            raise ValueError("capacity must be greater than 0")
+
+        if not 0 < error_rate < 1 :
+            raise ValueError("error_rate must be between 0 and 1")
+        
         self.capacity = capacity
         self.error_rate = error_rate
 

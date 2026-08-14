@@ -1,3 +1,5 @@
+import pytest
+
 from bloomfilter.bloom import BloomFilter
 
 
@@ -40,4 +42,25 @@ def test_hash_positions_are_within_bit_array():
     for item in items:
         for position in bf._hashes(item):
             assert 0 <= position < bf.bit_array_size
-            
+
+
+def test_capacity_must_be_positive():
+    with pytest.raises(ValueError):
+        BloomFilter(0, 0.01)
+
+    with pytest.raises(ValueError):
+        BloomFilter(-1, 0.01)
+
+
+def test_error_rate_must_be_between_zero_and_one():
+    with pytest.raises(ValueError):
+        BloomFilter(100, 0)
+
+    with pytest.raises(ValueError):
+        BloomFilter(100, 1)
+
+    with pytest.raises(ValueError):
+        BloomFilter(100, -0.1)
+
+    with pytest.raises(ValueError):
+        BloomFilter(100, 1.1)
