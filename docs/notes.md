@@ -348,8 +348,8 @@ SHA-256 gives me 32 bytes.
 I can split those bytes into two 16-byte values:
 
 ```python
-h1 = int.from_bytes(digest[:16])
-h2 = int.from_bytes(digest[16:])
+h1 = int.from_bytes(digest[:16]) # first hash
+h2 = int.from_bytes(digest[16:]) # second hash
 ```
 
 So I am getting two large integer values from the same SHA-256 digest.
@@ -433,4 +433,42 @@ A false positive is possible, but a false negative should not be possible if the
 
 ---
 
+# 9. Input Type
 - For this first version , BloomFilter accepts strings (keeping it simple)
+
+# 10. Capacity and Saturation
+Capacity determines how much data the Bloom filter is designed to hold. Query count determines how many observations we make of its false-positive behavior.
+
+If we insert 20,000 items into a filter designed for 10,000, the false-positive rate will go up
+
+- Increasing k sets more bits per item.
+- Increasing n adds more items.
+- Both increase the number of 1s.
+- Too many 1s → false positives increase.
+
+When we say:
+
+```python
+BloomFilter(10_000, 0.01)
+```
+we're essentially saying:
+
+"Design the filter's space and hash count under the assumption that approximately 10,000 items will be inserted while targeting a 1% false-positive probability."
+
+A Bloom filter doesn't become "full" because it runs out of storage like a list or database table. It becomes less useful as its bits become saturated, because the probability of false positives increases.
+
+That's why capacity is meaningful.
+
+- fewer inserted items → lower false-positive rate
+- more inserted items → higher false-positive rate
+
+# 11. Experiment
+**Experiment: changing the number of inserted items**
+
+I kept the capacity and target error rate fixed and changed the number of inserted items. I observed that the fewer the inserted items, the lower the false positive rate, and the more inserted items, the higher the false positive rate
+
+**Experiment: changing the target error rate**
+
+I kept the capacity and number of inserted items fixed and changed the target error rate. I observed that the bit_array_size decrease, hash_count decrease, and the positive rate is lower
+
+Additionally, The false-positive probability of the filter doesn't change because we perform more queries. Instead, increasing the number of queries gives us a larger sample, so our observed rate becomes a more stable estimate of the theoretical probability.
