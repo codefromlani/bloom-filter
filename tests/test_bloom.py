@@ -64,3 +64,24 @@ def test_error_rate_must_be_between_zero_and_one():
 
     with pytest.raises(ValueError):
         BloomFilter(100, 1.1)
+
+
+def test_set_and_get_bit():
+    bf = BloomFilter(100, 0.01)
+
+    assert bf._get_bit(5) is False
+
+    bf._set_bit(5)
+
+    assert bf._get_bit(5) is True
+    assert bf._get_bit(4) is False
+
+
+def test_setting_one_bit_does_not_clear_another():
+    bf = BloomFilter(100, 0.01)
+
+    bf._set_bit(5)
+    bf._set_bit(2)
+
+    assert bf._get_bit(5) is True
+    assert bf._get_bit(2) is True
