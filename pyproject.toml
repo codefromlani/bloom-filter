@@ -7,6 +7,12 @@ name = "bloom-filter"
 version = "0.1.0"
 description = "A Bloom filter implementation in Python"
 requires-python = ">=3.12"
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]
